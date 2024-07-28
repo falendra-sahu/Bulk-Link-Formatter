@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bulk Link Formatter</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f0f2f5;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+        .container {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            width: 100%;
+            max-width: 900px;
+            box-sizing: border-box;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+            font-size: 24px;
+            font-weight: bold;
+            color: #333;
+        }
+        .input-box {
+            margin-bottom: 25px;
+        }
+        .input-box textarea {
+            padding: 16px;
+            width: 100%;
+            height: 250px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 16px;
+            resize: vertical;
+            background: #f9f9f9;
+            color: #333;
+            transition: border-color 0.3s;
+        }
+        .input-box textarea:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+        .button-box {
+            margin-bottom: 25px;
+            display: flex;
+            gap: 12px;
+            flex-wrap: wrap;
+        }
+        .button-box button {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 8px;
+            background-color: #007bff;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.3s;
+        }
+        .button-box button:hover {
+            background-color: #0056b3;
+            transform: scale(1.05);
+        }
+        .button-box button:active {
+            background-color: #004494;
+            transform: scale(1);
+        }
+        .status {
+            margin-bottom: 15px;
+            font-weight: 600;
+            text-align: center;
+        }
+        .status.success {
+            color: #28a745;
+        }
+        .status.error {
+            color: #dc3545;
+        }
+        .result-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            background: #fafafa;
+            padding: 20px;
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            border: 1px solid #e0e0e0;
+            padding: 12px;
+            text-align: left;
+            font-size: 14px;
+        }
+        th {
+            background-color: #007bff;
+            color: #ffffff;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        pre {
+            white-space: pre-wrap;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            Bulk Link Formatter
+        </div>
+        <div class="input-box">
+            <textarea id="linksNames" placeholder="Paste links here, one per line. Default names will be added automatically."></textarea>
+        </div>
+        <div class="button-box">
+            <button onclick="pasteText()">Paste</button>
+            <button onclick="copyText()">Copy</button>
+            <button onclick="clearText()">Clear</button>
+            <button onclick="generateResults()">Generate Results</button>
+        </div>
+        <div class="status" id="status"></div>
+        <div class="result-box" id="result">
+            <table id="resultTable">
+                <thead>
+                    <tr>
+                        <th>Links</th>
+                    </tr>
+                </thead>
+                <tbody id="resultBody">
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function pasteText() {
+            navigator.clipboard.readText().then(text => {
+                const lines = text.split('\n');
+                const formattedLines = lines.map(line => {
+                    const link = line.trim();
+                    let name = link.split('/').filter(part => part).pop();
+                    if (name) {
+                        name = name.split('.')[0];
+                    } else {
+                        name = 'No Name';
+                    }
+                    return `${link},${name}`;
+                }).join('\n');
+
+                document.getElementById('linksNames').value = formattedLines;
+                showStatus('Pasted and formatted', false);
+            }).catch(err => {
+                showStatus('Failed to paste', true);
+            });
+        }
+
+        function copyText() {
+            const rows = document.querySelectorAll('#resultBody tr');
+            let textToCopy = '';
+
+            rows.forEach(row => {
+                const cell = row.querySelector('pre').innerText;
+                textToCopy += cell + '\n';
+            });
+
+            navigator.clipboard.writeText(textToCopy).then(() => {
+                showStatus('Copied', false);
+            }).catch(err => {
+                showStatus('Failed to copy', true);
+            });
+        }
+
+        function clearText() {
+            const textarea = document.getElementById('linksNames');
+            if (textarea.value.trim()) {
+                textarea.value = '';
+                document.getElementById('resultBody').innerHTML = '';
+                showStatus('Cleared', false);
+            } else {
+                showStatus('Nothing to clear', true);
+            }
+        }
+
+        function generateResults() {
+            const input = document.getElementById('linksNames').value;
+            const resultBody = document.getElementById('resultBody');
+
+            if (input.trim()) {
+                const lines = input.split('\n');
+                let rows = '';
+
+                lines.forEach(line => {
+                    const [link, name] = line.split(',');
+                    if (link && name) {
+                        rows += `<tr><td><pre>&lt;li&gt;&lt;a href="${link.trim()}" target="_blank"&gt;${name.trim()}&lt;/a&gt;&lt;/li&gt;</pre></td></tr>\n`;
+                    }
+                });
+
+                resultBody.innerHTML = rows;
+                showStatus('Results generated', false);
+            } else {
+                resultBody.innerHTML = "<tr><td colspan='1'>Please fill in the field.</td></tr>";
+                showStatus('Please fill in the field.', true);
+            }
+        }
+
+        function showStatus(message, isError = false) {
+            const statusElement = document.getElementById('status');
+            statusElement.innerText = message;
+            statusElement.className = isError ? 'status error' : 'status success';
+            setTimeout(() => {
+                statusElement.innerText = '';
+            }, 2000);
+        }
+    </script>
+</body>
+</html>
