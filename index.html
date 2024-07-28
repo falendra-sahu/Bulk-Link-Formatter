@@ -204,7 +204,8 @@
                 lines.forEach(line => {
                     const [link, name] = line.split(',');
                     if (link && name) {
-                        rows += `<tr><td><pre>&lt;li&gt;&lt;a href="${link.trim()}" target="_blank"&gt;${name.trim()}&lt;/a&gt;&lt;/li&gt;</pre></td></tr>\n`;
+                        // Format updated to use <div class="website-item">
+                        rows += `<tr><td><pre>&lt;div class="website-item"&gt;&lt;a href="${link.trim()}" target="_blank"&gt;${name.trim().replace(/-/g, ' ')}&lt;/a&gt;&lt;/div&gt;</pre></td></tr>\n`;
                     }
                 });
 
