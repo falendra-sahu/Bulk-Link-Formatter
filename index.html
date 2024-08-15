@@ -1,189 +1,246 @@
+<html><head><base href="https://websim.creationengine.com/" target="_blank"></head><body>
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bulk Link Formatter</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --background-color: #f0f4f8;
+            --card-background: #ffffff;
+            --text-color: #333333;
+            --border-radius: 12px;
+            --box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
         body {
-            font-family: 'Poppins', sans-serif;
-            background-color: #f4f7fa;
+            font-family: 'Inter', sans-serif;
+            background-color: var(--background-color);
             margin: 0;
             padding: 0;
             display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            color: var(--text-color);
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            flex-direction: column; /* Added to center footer */
+            padding: 2rem 0;
         }
+
         .container {
-            background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            padding: 40px;
-            width: 100%;
+            background: var(--card-background);
+            border-radius: var(--border-radius);
+            box-shadow: var(--box-shadow);
+            padding: 2rem;
+            width: 90%;
             max-width: 800px;
-            box-sizing: border-box;
-            transition: transform 0.3s;
+            transition: transform 0.3s ease;
         }
+
         .container:hover {
             transform: translateY(-5px);
         }
+
         .header {
             text-align: center;
-            margin-bottom: 30px;
-            font-size: 28px;
+            margin-bottom: 2rem;
+            color: var(--primary-color);
+            font-size: 2.5rem;
             font-weight: 600;
-            color: #333;
         }
+
         .input-box {
-            margin-bottom: 30px;
+            margin-bottom: 1.5rem;
         }
+
         .input-box textarea {
-            padding: 16px;
             width: 100%;
-            height: 200px;
+            height: 150px;
+            padding: 1rem;
             border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            box-sizing: border-box;
-            font-size: 16px;
+            border-radius: var(--border-radius);
+            font-size: 1rem;
             resize: vertical;
-            background: #f9f9f9;
-            color: #333;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
         }
+
         .input-box textarea:focus {
-            border-color: #007bff;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.25);
             outline: none;
         }
+
         .button-box {
-            margin-bottom: 30px;
             display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
+            gap: 1rem;
+            flex-wrap: nowrap;
             justify-content: center;
+            margin-bottom: 1.5rem;
         }
+
         .button-box button {
-            padding: 14px 28px;
+            padding: 0.75rem 1rem;
             border: none;
-            border-radius: 8px;
-            background-color: #007bff;
-            color: #ffffff;
-            font-size: 16px;
+            border-radius: var(--border-radius);
+            font-size: 0.9rem;
             font-weight: 600;
             cursor: pointer;
-            transition: background-color 0.3s, transform 0.3s;
-            box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex: 1;
+            white-space: nowrap;
         }
+
+        .button-box button i {
+            margin-right: 0.5rem;
+        }
+
+        .paste-btn { background-color: var(--primary-color); color: white; }
+        .copy-btn { background-color: var(--secondary-color); color: white; }
+        .clear-btn { background-color: #e74c3c; color: white; }
+        .generate-btn { background-color: #9b59b6; color: white; }
+
         .button-box button:hover {
-            background-color: #0056b3;
-            transform: scale(1.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
         }
-        .button-box button:active {
-            background-color: #004494;
-            transform: scale(1);
-        }
+
         .status {
-            margin-bottom: 20px;
-            font-weight: 600;
             text-align: center;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            min-height: 24px;
         }
-        .status.success {
-            color: #28a745;
-        }
-        .status.error {
-            color: #dc3545;
-        }
+
+        .status.success { color: var(--secondary-color); }
+        .status.error { color: #e74c3c; }
+
         .result-box {
-            border: 1px solid #e0e0e0;
-            border-radius: 8px;
-            background: #fafafa;
-            padding: 20px;
-            overflow-x: auto;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
         }
+
         table {
             width: 100%;
-            border-collapse: collapse;
+            border-collapse: separate;
+            border-spacing: 0;
         }
+
         th, td {
-            border: 1px solid #e0e0e0;
-            padding: 12px;
+            padding: 1rem;
             text-align: left;
-            font-size: 14px;
+            border-bottom: 1px solid #e0e0e0;
         }
+
         th {
-            background-color: #007bff;
-            color: #ffffff;
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
         }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
+
+        tr:last-child td {
+            border-bottom: none;
         }
+
         pre {
             white-space: pre-wrap;
             margin: 0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 0.9rem;
         }
+
         footer {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #666;
             text-align: center;
+            padding: 1rem;
         }
+
+        footer p {
+            margin: 0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
         footer a {
-            color: #007bff;
+            color: var(--primary-color);
             text-decoration: none;
-            font-weight: bold;
+            font-weight: 600;
+            transition: color 0.3s ease;
         }
+
         footer a:hover {
-            text-decoration: underline;
+            color: #2980b9;
         }
+
         @media (max-width: 600px) {
             .container {
-                padding: 20px;
+                padding: 1.5rem;
             }
+
             .header {
-                font-size: 24px;
+                font-size: 1.8rem;
             }
+
+            .button-box {
+                flex-wrap: nowrap;
+            }
+
             .button-box button {
-                padding: 12px 20px;
-                font-size: 14px;
+                padding: 0.6rem 0.8rem;
+                font-size: 0.8rem;
             }
-            .input-box textarea {
-                height: 150px;
+
+            .button-box button i {
+                margin-right: 0.3rem;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header">
-            Bulk Link Formatter
-        </div>
-        <div class="input-box">
-            <textarea id="linksNames" placeholder="Paste links here, one per line. Default names will be added automatically."></textarea>
-        </div>
-        <div class="button-box">
-            <button onclick="pasteText()">Paste</button>
-            <button onclick="copyText()">Copy</button>
-            <button onclick="clearText()">Clear</button>
-            <button onclick="generateResults()">Generate Results</button>
-        </div>
-        <div class="status" id="status"></div>
-        <div class="result-box" id="result">
-            <table id="resultTable">
-                <thead>
-                    <tr>
-                        <th>Links</th>
-                    </tr>
-                </thead>
-                <tbody id="resultBody">
-                </tbody>
-            </table>
+    <div class="main-content">
+        <div class="container">
+            <div class="header">
+                Bulk Link Formatter
+            </div>
+            <div class="input-box">
+                <textarea id="linksNames" placeholder="Paste links here, one per line. Default names will be added automatically."></textarea>
+            </div>
+            <div class="button-box">
+                <button class="paste-btn" onclick="pasteText()"><i class="fas fa-paste"></i> Paste</button>
+                <button class="copy-btn" onclick="copyText()"><i class="fas fa-copy"></i> Copy</button>
+                <button class="clear-btn" onclick="clearText()"><i class="fas fa-trash-alt"></i> Clear</button>
+                <button class="generate-btn" onclick="generateResults()"><i class="fas fa-magic"></i> Generate</button>
+            </div>
+            <div class="status" id="status"></div>
+            <div class="result-box">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Formatted Links</th>
+                        </tr>
+                    </thead>
+                    <tbody id="resultBody">
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <footer>
-        Powered by <a href="#">Falendra Sahu ❤️</a>
+        <p>Crafted with <i class="fas fa-heart" style="color: #e74c3c;"></i> by <a href="https://websim.creationengine.com/falendra-sahu">Falendra Sahu</a></p>
     </footer>
 
     <script>
@@ -218,7 +275,7 @@
             });
 
             navigator.clipboard.writeText(textToCopy).then(() => {
-                showStatus('Copied', false);
+                showStatus('Copied to clipboard', false);
             }).catch(err => {
                 showStatus('Failed to copy', true);
             });
@@ -229,7 +286,7 @@
             if (textarea.value.trim()) {
                 textarea.value = '';
                 document.getElementById('resultBody').innerHTML = '';
-                showStatus('Cleared', false);
+                showStatus('Cleared all content', false);
             } else {
                 showStatus('Nothing to clear', true);
             }
@@ -246,16 +303,15 @@
                 lines.forEach(line => {
                     const [link, name] = line.split(',');
                     if (link && name) {
-                        // Format updated to use <div class="website-item">
                         rows += `<tr><td><pre>&lt;div class="website-item"&gt;&lt;a href="${link.trim()}" target="_blank"&gt;${name.trim().replace(/-/g, ' ')}&lt;/a&gt;&lt;/div&gt;</pre></td></tr>\n`;
                     }
                 });
 
                 resultBody.innerHTML = rows;
-                showStatus('Results generated', false);
+                showStatus('Results generated successfully', false);
             } else {
-                resultBody.innerHTML = "<tr><td colspan='1'>Please fill in the field.</td></tr>";
-                showStatus('Please fill in the field.', true);
+                resultBody.innerHTML = "<tr><td>Please enter links to format.</td></tr>";
+                showStatus('Please enter links to format', true);
             }
         }
 
@@ -265,8 +321,10 @@
             statusElement.className = isError ? 'status error' : 'status success';
             setTimeout(() => {
                 statusElement.innerText = '';
-            }, 2000);
+                statusElement.className = 'status';
+            }, 3000);
         }
     </script>
 </body>
 </html>
+</body></html>
